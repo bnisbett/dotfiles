@@ -4,7 +4,7 @@ set number              " show line numbers
 set history=256         " number of things to remember in history
 set clipboard+=unnamed  " yanks go on clipboard instead.
 set timeoutlen=250      " time to wait after ESC (default causes an annoying delay)
-set pastetoggle=<F10>   " toggle between paste and normal: for 'safer' pasting from keyboard
+set pastetoggle=<F4>   " toggle between paste and normal: for 'safer' pasting from keyboard
 
 " Backup
 set nowritebackup
@@ -45,9 +45,6 @@ set fo+=o " automatically insert the current comment leader after hitting 'o' or
 set fo-=r " don't automatically insert a comment leader after an enter
 set fo-=t " don't auto-wrap text using textwidth (does not apply to comments)
 
-" Strip whitespace on save
-au BufWritePre *.{rb,py,js,hs,c,h,haml,erb,rake,txt} :%s/\s\+$//e
-
 set nowrap
 set textwidth=0                 " don't wrap lines by default
 set wildmode=list:longest       " make cmdline tab completion similar to bash
@@ -67,6 +64,8 @@ au BufRead,BufNewFile {Gemfile,Rakefile,Capfile,*.rake,config.ru} set ft=ruby
 au BufRead,BufNewFile {*.md,*.mkd,*.markdown}                     set ft=markdown
 au BufRead,BufNewFile {COMMIT_EDITMSG}                            set ft=gitcommit
 au BufRead,BufNewFile {*.es6}                                     set ft=javascript
+au BufWritePre *.{eex,ex,exs,rb,py,js,hs,c,h,haml,erb,rake,txt} :%s/\s\+$//e  " Strip whitespace on save
+au BufWritePost *.exs,*.ex silent :!mix format % " Run mix format on file save
 " "}}}
 
 " Key Mappings "{{{
@@ -93,49 +92,32 @@ set laststatus=2      " always show statusline
 set statusline+=%#error#
 set statusline+=%{&paste?'[paste]':''}
 set statusline+=%*
+"
 " "}}}
 
-" Scripts and Bundles "{{{
-filetype off " required!
-set runtimepath+=~/.vim/bundle/vundle/
-call vundle#rc()
+call plug#begin('~/.vim/plugged')
 
-" let vundle manage vundle
-Bundle 'gmarik/vundle'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'nono/vim-handlebars'
-" Bundle "wookiehangover/jshint.vim"
 " colorschemes
-Bundle 'molokai'
-Bundle 'inkpot'
-Bundle 'jgdavey/vim-railscasts'
-colorscheme railscasts
+Plug 'tomasr/molokai'
+Plug 'ciaranm/inkpot'
+Plug 'jgdavey/vim-railscasts'
 
 " programming
-Bundle 'scrooloose/syntastic'
-Bundle 'tpope/vim-fugitive'
-Plugin 'othree/yajs.vim'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-fugitive'
 
-let g:syntastic_javascript_checkers = ['eslint']
-
-" file navigation
-" Bundle 'ack.vim'
-
-Bundle 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] } "Loads only when opening NERDTree
 noremap <silent> <F1> :NERDTreeToggle<CR>
 
-Bundle 'corntrace/bufexplorer'
+Plug 'corntrace/bufexplorer'
 noremap <silent> <F2> :BufExplorer<CR>
 
-" Bundle 'kien/ctrlp.vim'
-" noremap <silent> <F3> :CtrlP<CR>
-
 set rtp+=/usr/local/opt/fzf
-Bundle 'junegunn/fzf.vim'
+Plug 'junegunn/fzf.vim'
 noremap <silent> <F3> :Files<CR>
 
-Bundle 'leafgarland/typescript-vim'
-Bundle 'elixir-editors/vim-elixir'
+Plug 'leafgarland/typescript-vim'
+Plug 'elixir-editors/vim-elixir'
 
-filetype plugin indent on " automatically detect file types.
-" "}}}
+call plug#end()
+colorscheme railscasts
